@@ -1,0 +1,71 @@
+:root {
+    --gradient: linear-gradient(45deg, #836db8 0%, #fbc2eb 100%);
+}
+  
+body {
+    margin: 0;
+    font-family: basic-sans, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.125em;
+    line-height: 1.6;
+    color: #333;
+    min-height: 100vh;
+}
+
+.wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.background {
+    width: 100vw;
+    height: 100vh;
+    position: absolute;
+    margin: 0;
+    padding: 0;
+    z-index: -100;
+    background: var(--gradient);
+    background-size: 150% 150%;
+}
+
+.title {
+    font-style: italic;
+    font-weight: bolder;
+    font-size: 90px;
+    text-align: center;
+    line-height: 80%;
+    text-transform: uppercase;
+
+    background: var(--gradient);
+    background-clip: text;
+    color: transparent;
+
+    -webkit-background-clip: text;
+}
+
+.bg {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    text-align: center;
+    width: 800px;
+    margin-bottom: 25px;
+    height: 200px;
+    border: 0.2em solid #000000;
+}
+
+.white {
+    background-color: white;
+}
+
+.pcr-button {
+    border: 3px solid black!important;
+}
+
+.pcr-button::after {
+    border-radius: 0!important;
+}

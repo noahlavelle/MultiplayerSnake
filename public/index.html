@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Snake</title>
+
+    <link rel="stylesheet" href="./css/index.css">
+    <link rel="stylesheet" href="./css/button.css">
+    <link rel="stylesheet" href="./css/options.css">
+    <link rel="stylesheet" href="./css/slider.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@simonwep/pickr/dist/themes/classic.min.css"/> <!-- 'classic' theme -->
+</head>
+<body>
+    <section class="wrapper" id="home">
+        <div>
+            <div class="bg white">
+                <div class="title">
+                    Multiplayer<br>Snake
+                </div>
+            </div>
+        
+            <div class="buttons">
+                <a href="#creategame"><button>Singleplayer</button></a> 
+                <a href="#creategame"><button>Multiplayer</button></a>
+                <a><button id="joingame">Join a Game</button></a> 
+                <a href="#options"><button>Options</button></a> 
+            </div>
+        </div>
+    </section>
+    <section class="wrapper" id="creategame">
+        <div>
+            <div class="bg white">
+                <div class="title">
+                    Create<br>Game
+                </div>
+            </div>
+
+            <div class="options">
+                <div id="picker">
+                    Game Speed:
+                    <div id="slider-wrapper">
+                        <input type="range" value="0" id="gamespeed" name="gamespeed" class="slider-label">
+                        <div id="value" symbol="%" startingvalue="50">0</div>
+                    </div>
+                </div>
+
+                <div id="picker">
+                    Game Time:
+                    <div id="slider-wrapper">
+                        <input type="range" value="0" id="gametime" name="gametime" class="slider-label">
+                        <div id="value" symbol="S" startingvalue="45" maxspecial="Unlimited">0</div>
+                    </div>
+                </div>
+
+                <div class="buttons">
+                    <a href="#game" id="play"><button>Play</button></a> 
+                    <a href="#home"><button>Home</button></a> 
+                </div>
+        </div>
+      </div>
+    </section>
+    <section class="wrapper" id="options">
+        <div>
+            <div class="bg white">
+                <div class="title">
+                    Options
+                </div>
+            </div>
+
+            <div class="options">
+                <div id="color-pickers">
+                    <div id="picker" default="#FFFFFF" value="player-color">Player Color:</div> 
+                    <div id="picker" default="#E7ECA3" value="canvas-color">Game Background Color:</div>
+                </div>
+
+                <div class="buttons">
+                    <a href="#home"><button>Home</button></a> 
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="wrapper" id="game">
+        <canvas id="gamecanvas" width="1000" height="1000"></canvas>
+    </section>
+
+    <div class="background"></div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@simonwep/pickr/dist/pickr.es5.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+    <script src="./js/canvas.js"></script>
+    <script src="./js/game.js"></script>
+    <script type="module" src="./js/app.js"></script>
+    <script>
+    </script>
+</body>
+</html>

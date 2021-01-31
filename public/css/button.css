@@ -1,0 +1,60 @@
+.buttons a {
+    text-decoration: none;
+}
+
+.buttons {
+    margin-left: 100px;
+}
+
+.buttons button {
+    background: white;
+    border: 0.125em solid #000000;
+    cursor: pointer;
+    font: 600 1.2rem 'Montserrat', sans-serif;
+    letter-spacing: 0.125em;
+    margin-top: 0.5rem;
+    padding: 0.5em 0.75em;
+    position: relative;
+    text-transform: uppercase;
+    display: block;
+    width: 600px;
+}
+.buttons button:before, .buttons button:after {
+    content: '';
+    position: absolute;
+    transition: all 0.125s ease-in-out;
+}
+.buttons button {
+    background: none;
+    border-color: transparent;
+}
+.buttons button:before, .buttons button:after {
+    transition: all 0.175s ease-in-out;
+}
+.buttons button:before {
+    background: black;
+    border: 0.125em dashed black;
+    left: -0.125em;
+    top: -0.125em;
+    right: -0.125em;
+    bottom: -0.125em;
+    z-index: -1;
+}
+.buttons button:hover:before, .buttons button:focus:before {
+    background: white;
+    border-width: 0.125em;
+}
+.buttons button:after {
+    background: white;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    top: 0;
+    z-index: -1;
+}
+
+.btn-bottom {
+    display: block;
+    margin-top: 10%;
+    position: absolute;
+}
