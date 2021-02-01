@@ -226,8 +226,8 @@ class Slider {
     updateSlider() {
         var rangePercent : any = $(this.input).val();
         $(this.input).css('filter', 'hue-rotate(-' + rangePercent + 'deg)');
-        $(this.value).html(`${Number.parseInt(rangePercent) + Number.parseInt($(this.value).attr("startingvalue")!)}${$(this.value).attr("symbol")}`);
-        if ($(this.value).attr("maxspecial") != undefined && rangePercent == 100) {
+        $(this.value).html(`${rangePercent}${$(this.value).attr("symbol")}`);
+        if ($(this.value).attr("maxspecial") != undefined && rangePercent == $(this.input).attr("max")) {
             $(this.value).html($(this.value).attr("maxspecial")!);
         }
     }

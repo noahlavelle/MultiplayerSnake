@@ -87,6 +87,9 @@ class Game {
             this.timeLeft = data[2];
             this.updateInfo();
         });
+        socket.on("add-length", (addLength) => {
+            this.snake.length += addLength;
+        })
 
         $("#respawn").on("click", () => {
             this.snake = new Snake(0, 0, 5);
@@ -156,7 +159,7 @@ class Game {
                     }
                 }
 
-                if (this.snake != null && !arrayEquals(this.snake.moveDir, [0, 0]) && JSON.stringify(this.allPlayersData[key][2]).indexOf(JSON.stringify(this.snake.coords)) !== -1) this.die();
+                if (this.snake != null && !arrayEquals(this.snake.moveDir, [0, 0]) && JSON.stringify(this.allPlayersData[key][2]).indexOf(JSON.stringify(this.snake.coords)) !== -1) this.die(key);
                 if (this.snake != null && !this.snake.isInvulnerable && ((this.snake.coords[0] > 990 || this.snake.coords[0] < 0) || (this.snake.coords[1] > 990 || this.snake.coords[1] < 0))) this.die();
             }
 
@@ -172,7 +175,7 @@ class Game {
         }
     }
 
-    die() {
+    die(key = null) {
         // @ts-ignore
         Swal.fire({
             title: 'Game Over',
@@ -194,6 +197,7 @@ class Game {
             }
         })
 
+        socket.emit("add-length", key, this.snake.length);
         socket.emit("send-data", ["name", this.playerColor, []]);
         this.snake = null;
         this.updateInfo();

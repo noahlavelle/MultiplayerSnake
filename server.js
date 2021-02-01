@@ -79,16 +79,29 @@ class Game {
             socket.on("new-food", () => {
                 this.createFood();
             });
+            socket.on("add-length", (id, length) => {
+                for (let s of this.players) {
+                    if (s.id == id) {
+                        s.emit("add-length", length);
+                    }
+                }
+            })
         }
     }
     addPlayer(socket) {
         socket.on("send-data", (data) => {
-            console.log(data)
             this.playerData[socket.id] = data;
         });
         socket.on("new-food", () => {
             this.createFood();
         });
+        socket.on("add-length", (id, length) => {
+            for (let s of this.players) {
+                if (s.id == id) {
+                    s.emit("add-length", length);
+                }
+            }
+        })
         socket.emit("new-food", this.foodCoords);
     }
     tick() {
