@@ -1,9 +1,27 @@
-.buttons a {
-    text-decoration: none;
+@media only screen and (max-device-width: 480px) {
+
+    .buttons button {
+        width: 50vw;
+    }
+
+    .buttons {
+        margin-left: 15%;
+    }
 }
 
-.buttons {
-    margin-left: 100px;
+@media only screen and (min-device-width: 480px) {
+    .buttons button {
+        width: 600px;
+    }
+
+    .buttons {
+        margin-left: 100px;
+    }
+    
+}
+
+.buttons a {
+    text-decoration: none;
 }
 
 .buttons button {
@@ -17,7 +35,6 @@
     position: relative;
     text-transform: uppercase;
     display: block;
-    width: 600px;
 }
 .buttons button:before, .buttons button:after {
     content: '';
