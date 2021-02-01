@@ -225,7 +225,7 @@ class Slider {
 
     updateSlider() {
         var rangePercent : any = $(this.input).val();
-        $(this.input).css('filter', 'hue-rotate(-' + rangePercent + 'deg)');
+        $(this.input).css('filter', 'hue-rotate(-' + (rangePercent - Math.max(-50, Math.min(Number.parseInt($(this.input).attr("min")) * 2), 100)) + 'deg)');
         $(this.value).html(`${rangePercent}${$(this.value).attr("symbol")}`);
         if ($(this.value).attr("maxspecial") != undefined && rangePercent == $(this.input).attr("max")) {
             $(this.value).html($(this.value).attr("maxspecial")!);
