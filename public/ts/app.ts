@@ -13,7 +13,10 @@ function reset () {
         $(location.hash).show();
     }
 
-    if (game != undefined && location.hash != "#game") game.running = false;
+    if (game != undefined && location.hash != "#game") {
+        socket.emit("send-data", []);
+        game.running = false;
+    }
 }
 
 if (location.search) {
@@ -47,6 +50,20 @@ jQuery(() => {
     let playerColor : any = localStorage.getItem("player-color");
     let canvasColor : any = localStorage.getItem("canvas-color");
     let foodColor : any = localStorage.getItem("food-color");
+
+    onresize = () => {
+        if (innerHeight > innerWidth) {
+            document.getElementById('gamecanvas').style.width = '80vw';
+            document.getElementById('gamecanvas').style.height = '80vw';
+        }
+        else {
+            document.getElementById('gamecanvas').style.width = '80vh';
+            document.getElementById('gamecanvas').style.height = '80vh';
+        }
+    };
+    
+    // @ts-ignore
+    onresize();
 
     reset();
 

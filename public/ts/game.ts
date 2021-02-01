@@ -204,9 +204,9 @@ class Game {
         if (this.snake) length = `${this.snake.length}`;
         else length = 'Dead';
         if (this.timeLeft) time = `${this.timeLeft}s`;
-        else time = 'Unlimited';
+        else time = 'Never';
 
-        $("#gameinfo").html(`Length: ${length}<br>Game Code: ${this.gameCode}<br>Time Left: ${time}`)
+        $("#gameinfo").html(`Length: ${length}<br>Game Code: ${this.gameCode}<br>Ends: ${time}`)
     }
 }
 

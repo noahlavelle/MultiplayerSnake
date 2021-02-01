@@ -12,23 +12,15 @@ body {
     line-height: 1.6;
     color: #333;
     min-height: 100vh;
+
+    background: var(--gradient);
+    background-size: 150% 150%;
 }
 
 .wrapper {
     display: flex;
     justify-content: center;
     align-items: center;
-}
-
-.background {
-    width: 100vw;
-    height: 100vh;
-    position: absolute;
-    margin: 0;
-    padding: 0;
-    z-index: -100;
-    background: var(--gradient);
-    background-size: 150% 150%;
 }
 
 .title {

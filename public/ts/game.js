@@ -172,8 +172,8 @@ class Game {
         if (this.timeLeft)
             time = `${this.timeLeft}s`;
         else
-            time = 'Unlimited';
-        $("#gameinfo").html(`Length: ${length}<br>Game Code: ${this.gameCode}<br>Time Left: ${time}`);
+            time = 'Never';
+        $("#gameinfo").html(`Length: ${length}<br>Game Code: ${this.gameCode}<br>Ends: ${time}`);
     }
 }
 function arrayEquals(a, b) {
