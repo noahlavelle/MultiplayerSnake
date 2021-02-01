@@ -1,0 +1,15 @@
+#picker input[type=checkbox] {
+    width: 30px;
+    height: 30px;
+    appearance: none;
+    border: 3px solid black;
+    border-radius: 5px;
+}
+
+#picker input[type=checkbox]:checked {
+    background-color: #17AF05;
+}
+
+#picker input[type=checkbox]:focus {
+    outline: none;
+}

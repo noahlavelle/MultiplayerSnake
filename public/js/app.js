@@ -185,7 +185,7 @@ $("#joingame").on("click", () => {
 });
 $("#play").on("click", () => {
     // @ts-ignore
-    socket.emit("creategame", 100 / ((Number.parseInt($("#gamespeed").val()) + 50) / 100), Number.parseInt($("#gametime").val()) + 50);
+    socket.emit("creategame", 100 / ((Number.parseInt($("#gamespeed").val())) / 100), Number.parseInt($("#gametime").val()), $("#getlength").val());
     game = new Game;
 });
 class Slider {

@@ -15,8 +15,8 @@ io.on("connection", (socket) => {
     socket.on("gameslist", () => {
         socket.emit("gameslist", Object.keys(games));
     });
-    socket.on("creategame", (refreshTime, time) => {
-        const game = new Game(socket, refreshTime, time);
+    socket.on("creategame", (refreshTime, time, getLength) => {
+        const game = new Game(socket, refreshTime, time, getLength);
         if (time == 180) {
             time = undefined;
         }
@@ -24,7 +24,7 @@ io.on("connection", (socket) => {
     });
     socket.on("joingame", (id) => {
         const game = games[id];
-        socket.emit("game-data", [game.refreshTime, game.id]);
+        socket.emit("game-data", [game.refreshTime, game.id, game.getLength]);
         game.players.push(socket);
         game.addPlayer(socket);
     });
@@ -34,7 +34,7 @@ http.listen(port, () => {
 });
 // @ts-ignore
 class Game {
-    constructor(socket, refreshTime, time) {
+    constructor(socket, refreshTime, time, getLength) {
         this.players = [];
         this.playerData = {};
         this.min = 0;
@@ -46,6 +46,8 @@ class Game {
         this.refreshTime = refreshTime;
         this.time = time;
         this.players.push(socket);
+        this.getLength = getLength;
+
         this.generateID();
         this.createEvents();
         this.tick();

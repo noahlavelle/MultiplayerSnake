@@ -55,6 +55,7 @@ class Game {
     refreshTime : number = 100;
     gameCode : number;
     timeLeft : number;
+    getLength : boolean;
 
     playerColor : string = localStorage.getItem("player-color") || "#A686C7";
     foodColor : string = localStorage.getItem("food-color") || "#FE6F61";
@@ -85,6 +86,7 @@ class Game {
             this.refreshTime = data[0];
             this.gameCode = data[1];
             this.timeLeft = data[2];
+            this.getLength = data[3];
             this.updateInfo();
         });
         socket.on("add-length", (addLength) => {
@@ -197,7 +199,7 @@ class Game {
             }
         })
 
-        socket.emit("add-length", key, this.snake.length);
+        if (this.getLength) socket.emit("add-length", key, this.snake.length);
         socket.emit("send-data", ["name", this.playerColor, []]);
         this.snake = null;
         this.updateInfo();

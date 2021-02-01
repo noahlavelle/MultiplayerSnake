@@ -62,6 +62,7 @@ class Game {
             this.refreshTime = data[0];
             this.gameCode = data[1];
             this.timeLeft = data[2];
+            this.getLength = data[3];
             this.updateInfo();
         });
         socket.on("add-length", (addLength) => {
@@ -164,7 +165,8 @@ class Game {
                 }, 1000);
             }
         });
-        socket.emit("add-length", key, this.snake.length);
+        if (this.getLength)
+            socket.emit("add-length", key, this.snake.length);
         socket.emit("send-data", ["name", this.playerColor, []]);
         this.snake = null;
         this.updateInfo();
