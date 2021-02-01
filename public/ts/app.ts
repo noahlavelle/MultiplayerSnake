@@ -204,7 +204,7 @@ $("#joingame").on("click", () => {
 
 $("#play").on("click", () => {
     // @ts-ignore
-    socket.emit("creategame", 100 / ((Number.parseInt($("#gamespeed").val())) / 100), Number.parseInt($("#gametime").val()), $("#getlength").val());
+    socket.emit("creategame", 100 / ((Number.parseInt($("#gamespeed").val())) / 100), Number.parseInt($("#gametime").val()), Boolean($("#getlength").val()));
     game = new Game;
 })
 

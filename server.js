@@ -24,7 +24,7 @@ io.on("connection", (socket) => {
     });
     socket.on("joingame", (id) => {
         const game = games[id];
-        socket.emit("game-data", [game.refreshTime, game.id, game.getLength]);
+        socket.emit("game-data", [game.refreshTime, game.id, game.time, game.getLength]);
         game.players.push(socket);
         game.addPlayer(socket);
     });
