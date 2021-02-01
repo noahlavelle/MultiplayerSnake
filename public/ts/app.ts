@@ -14,8 +14,11 @@ function reset () {
     }
 
     if (game != undefined && location.hash != "#game") {
-        socket.emit("send-data", []);
         game.running = false;
+        setTimeout(() => {
+            socket.emit("send-data", ["", "", []]);
+        }, 100)
+        
     }
 }
 

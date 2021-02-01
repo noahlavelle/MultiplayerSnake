@@ -17,7 +17,7 @@ io.on("connection", (socket) => {
     });
     socket.on("creategame", (refreshTime, time) => {
         const game = new Game(socket, refreshTime, time);
-        if (time == 150) {
+        if (time == 180) {
             time = undefined;
         }
         socket.emit("game-data", [refreshTime, game.id, time]);
@@ -83,6 +83,7 @@ class Game {
     }
     addPlayer(socket) {
         socket.on("send-data", (data) => {
+            console.log(data)
             this.playerData[socket.id] = data;
         });
         socket.on("new-food", () => {

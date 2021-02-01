@@ -167,6 +167,8 @@ class Game {
                 }
                 this.tick();
             }, this.refreshTime)
+        } else {
+            socket.emit("send-data", ["", "", []]);
         }
     }
 

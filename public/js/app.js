@@ -13,8 +13,10 @@ function reset() {
         $(location.hash).show();
     }
     if (game != undefined && location.hash != "#game") {
-        socket.emit("send-data", []);
         game.running = false;
+        setTimeout(() => {
+            socket.emit("send-data", ["", "", []]);
+        }, 100);
     }
 }
 if (location.search) {
@@ -183,7 +185,8 @@ $("#joingame").on("click", () => {
 });
 $("#play").on("click", () => {
     // @ts-ignore
-    socket.emit("creategame", 100 / ((Number.parseInt($("#gamespeed").val()) + 50) / 100), Number.parseInt($("#gametime").val()) + 50);
+    console.log(100 / (Number.parseInt($("#gamespeed").val()) / 100))
+    socket.emit("creategame", 100 / (Number.parseInt($("#gamespeed").val()) / 100), Number.parseInt($("#gametime").val()));
     game = new Game;
 });
 class Slider {
@@ -197,8 +200,8 @@ class Slider {
     updateSlider() {
         var rangePercent = $(this.input).val();
         $(this.input).css('filter', 'hue-rotate(-' + rangePercent + 'deg)');
-        $(this.value).html(`${Number.parseInt(rangePercent) + Number.parseInt($(this.value).attr("startingvalue"))}${$(this.value).attr("symbol")}`);
-        if ($(this.value).attr("maxspecial") != undefined && rangePercent == 100) {
+        $(this.value).html(`${rangePercent}${$(this.value).attr("symbol")}`);
+        if ($(this.value).attr("maxspecial") != undefined && rangePercent == $(this.input).attr("max")) {
             $(this.value).html($(this.value).attr("maxspecial"));
         }
     }
