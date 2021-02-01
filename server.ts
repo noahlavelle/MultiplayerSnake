@@ -23,16 +23,19 @@ io.on("connection", (socket) => {
         socket.emit("gameslist", Object.keys(games));
     });
 
-    socket.on("creategame", () => {
-        const game = new Game(socket);
-        console.log(game.id)
+    socket.on("creategame", (refreshTime, time) => {
+        const game = new Game(socket, refreshTime, time);
+        if (time == 150) {
+            time = undefined;
+        }
+        socket.emit("game-data", [refreshTime, game.id, time]);
     });
 
     socket.on("joingame", (id) => {
-        console.log(id)
-        const game = games[id];
-        console.log(game)
+        const game : Game = games[id];
+        socket.emit("game-data", [game.refreshTime, game.id]);
         game.players.push(socket);
+        game.addPlayer(socket);
     })
 })
 
@@ -45,15 +48,25 @@ class Game {
     playerData = {}
     id : string;
     min : number = 0;
-    max : number = 1000;
+    max : number = 950;
     gridSize : number = 30;
+    foodCoords : number[] = [];
+    refreshTime: number = 100;
+    running : boolean = true;
+    time : number;
 
-    constructor (socket) {
+    constructor (socket, refreshTime, time) {
+        this.refreshTime = refreshTime;
+        this.time = time;
         this.players.push(socket);
         this.generateID();
         this.createEvents();
         this.tick();
         this.createFood();
+
+        setTimeout(() => {
+            this.running = false;
+        }, time * 1000)
     }
 
     generateID() {
@@ -68,6 +81,7 @@ class Game {
     createFood() {
         let x : number = Math.round(Math.round((Math.random() * (this.max - this.min)) + this.min) / this.gridSize) * this.gridSize
         let y : number = Math.round(Math.round((Math.random() * (this.max - this.min)) + this.min) / this.gridSize) * this.gridSize
+        this.foodCoords = [x, y];
         for (let socket of this.players) {
             socket.emit("new-food", [x, y]);
         }
@@ -78,16 +92,34 @@ class Game {
             socket.on("send-data", (data) => {
                 this.playerData[socket.id] = data;
             });
+
+            socket.on("new-food", () => {
+                this.createFood();
+            });
         }
     }
 
+    addPlayer(socket) {
+        socket.on("send-data", (data) => {
+            this.playerData[socket.id] = data;
+        });
+
+        
+        socket.on("new-food", () => {
+            this.createFood();
+        });
+
+        socket.emit("new-food", this.foodCoords);
+    }
+
     tick() {
-        for (let socket of this.players) {
-            socket.emit("player-data", this.playerData);
+        if (this.running) {
+            for (let socket of this.players) {
+                socket.emit("player-data", this.playerData);
+            }
+            setTimeout(() => {
+                this.tick();
+            }, this.refreshTime)
         }
-        setTimeout(() => {
-            this.tick();
-        }, 100)
     }
 }
-  

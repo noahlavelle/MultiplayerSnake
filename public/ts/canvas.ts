@@ -1,9 +1,5 @@
 const canvas = <HTMLCanvasElement> document.getElementById('gamecanvas');
 const ctx = canvas.getContext('2d');
-const w = window.innerWidth;
-const h =window.innerHeight;
-canvas.width  = w - (w *0.019);
-canvas.height = h - (h *0.033);
 let keyPressed = false;
 
 function draw(x, y, gridSize, color) {
@@ -12,17 +8,8 @@ function draw(x, y, gridSize, color) {
 }
 
 function clear() {
-    ctx.fillStyle = '#23272a';
-    ctx.fillRect(0, 0, w, h);
-}
-
-function end(game, length) {
-    game.started = false;
-    game.snake.length = length;
-    game.snake.x = 0;
-    game.snake.y = 0;
-    game.snake.moveDir = [0, 0]
-    game.food = new Food(game.makeFoodCoords(canvas.width), game.makeFoodCoords(canvas.height));
+    ctx.fillStyle = localStorage.getItem("canvas-color") || "#ffffff";
+    ctx.fillRect(0, 0, 990, 990);
 }
 
 function text(text, font, color, xOffset, yOffset) {

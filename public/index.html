@@ -40,7 +40,7 @@
                 <div id="picker">
                     Game Speed:
                     <div id="slider-wrapper">
-                        <input type="range" value="0" id="gamespeed" name="gamespeed" class="slider-label">
+                        <input type="range" value="50" id="gamespeed" name="gamespeed" class="slider-label">
                         <div id="value" symbol="%" startingvalue="50">0</div>
                     </div>
                 </div>
@@ -48,8 +48,8 @@
                 <div id="picker">
                     Game Time:
                     <div id="slider-wrapper">
-                        <input type="range" value="0" id="gametime" name="gametime" class="slider-label">
-                        <div id="value" symbol="S" startingvalue="45" maxspecial="Unlimited">0</div>
+                        <input type="range" value="50" id="gametime" name="gametime" class="slider-label">
+                        <div id="value" symbol="S" startingvalue="50" maxspecial="Unlimited">0</div>
                     </div>
                 </div>
 
@@ -70,8 +70,9 @@
 
             <div class="options">
                 <div id="color-pickers">
-                    <div id="picker" default="#FFFFFF" value="player-color">Player Color:</div> 
-                    <div id="picker" default="#E7ECA3" value="canvas-color">Game Background Color:</div>
+                    <div id="picker" default="#A686C7" value="player-color">Player Color:</div> 
+                    <div id="picker" default="#FE6F61" value="food-color">Food Color:</div>
+                    <div id="picker" default="#FFFFFF" value="canvas-color">Game Background Color:</div>
                 </div>
 
                 <div class="buttons">
@@ -81,12 +82,26 @@
         </div>
     </section>
     <section class="wrapper" id="game">
-        <canvas id="gamecanvas" width="1000" height="1000"></canvas>
+    <div style="display: block;">
+        <div class="buttons" style="margin-left: 200px!important;">
+            <a id="respawn"><button>Respawn</button></a> 
+            <a href="#home"><button>Home</button></a> 
+
+        <button id="gameinfo">
+            Length: ...<br>
+            Game Code: ...<br>
+            Time Left: ...<br>
+        </button>
+    </div>
+        <br>
+        <canvas id="gamecanvas" width="990" height="990"></canvas>
+    </div>
     </section>
 
     <div class="background"></div>
 
     <script src="/socket.io/socket.io.js"></script>
+    <script src="https://unpkg.com/hacktimer@1.1.3/HackTimer.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@simonwep/pickr/dist/pickr.es5.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>

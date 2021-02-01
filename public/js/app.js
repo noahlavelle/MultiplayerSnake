@@ -1,6 +1,7 @@
 const pages = ["#home", "#creategame", "#options, #game"];
 const titles = ["Snake", "Snake | Create Gane", "Snake | Options, Snake | Game"];
 const errorCodes = ["?a", "?b"];
+let game;
 function reset() {
     hideAll();
     if (pages.includes(location.hash))
@@ -11,7 +12,8 @@ function reset() {
     else {
         $(location.hash).show();
     }
-    ;
+    if (game != undefined && location.hash != "#game")
+        game.running = false;
 }
 if (location.search) {
     let error = location.search;
@@ -44,6 +46,7 @@ if (location.search) {
 jQuery(() => {
     let playerColor = localStorage.getItem("player-color");
     let canvasColor = localStorage.getItem("canvas-color");
+    let foodColor = localStorage.getItem("food-color");
     reset();
     window.onpopstate = () => {
         reset();
@@ -62,6 +65,12 @@ jQuery(() => {
                     canvasColor = child.getAttribute("default");
                 }
                 currentColor = canvasColor;
+                break;
+            case "food-color":
+                if (foodColor == null) {
+                    foodColor = child.getAttribute("default");
+                }
+                currentColor = foodColor;
                 break;
         }
         const newElement = document.createElement("span");
@@ -105,7 +114,7 @@ jQuery(() => {
                 }
             }
         });
-        pickr.on('save', (color, instance) => {
+        pickr.on('save', (color) => {
             localStorage.setItem(child.getAttribute("value"), color.toHEXA().toString());
         });
     });
@@ -149,32 +158,39 @@ $("#joingame").on("click", () => {
         },
         allowOutsideClick: true
     }).then((result) => {
-        if (result != undefined) {
-            socket.emit("joingame", result);
-            location.hash = "#game";
+        if (result.isConfirmed) {
+            if (result != undefined) {
+                socket.emit("joingame", result.value);
+                location.hash = "#game";
+                game = new Game;
+            }
         }
     });
 });
 $("#play").on("click", () => {
-    socket.emit("creategame");
-    const game = new Game;
+    // @ts-ignore
+    socket.emit("creategame", 100 / ((Number.parseInt($("#gamespeed").val()) + 50) / 100), Number.parseInt($("#gametime").val()) + 50);
+    game = new Game;
 });
 class Slider {
     constructor(slider) {
         this.slider = slider;
+        this.input = $(this.slider).find("input");
+        this.value = $(this.slider).find("#value");
         this.monitor();
+        this.updateSlider();
+    }
+    updateSlider() {
+        var rangePercent = $(this.input).val();
+        $(this.input).css('filter', 'hue-rotate(-' + rangePercent + 'deg)');
+        $(this.value).html(`${Number.parseInt(rangePercent) + Number.parseInt($(this.value).attr("startingvalue"))}${$(this.value).attr("symbol")}`);
+        if ($(this.value).attr("maxspecial") != undefined && rangePercent == 100) {
+            $(this.value).html($(this.value).attr("maxspecial"));
+        }
     }
     monitor() {
-        var rangePercent = $('input[type="range"]').val();
-        let input = $(this.slider).find("input");
-        let value = $(this.slider).find("#value");
-        $(input).on('change input', function () {
-            rangePercent = $(input).val();
-            $(input).css('filter', 'hue-rotate(-' + rangePercent + 'deg)');
-            $(value).html(`${Number.parseInt(rangePercent) + Number.parseInt($(value).attr("startingvalue"))}${$(value).attr("symbol")}`);
-            if ($(value).attr("maxspecial") != undefined && rangePercent == 100) {
-                $(value).html($(value).attr("maxspecial"));
-            }
+        $(this.input).on('change input', () => {
+            this.updateSlider();
         });
     }
 }

@@ -40,7 +40,7 @@
     bottom: -0.125em;
     z-index: -1;
 }
-.buttons button:hover:before, .buttons button:focus:before {
+.buttons button:hover:before {
     background: white;
     border-width: 0.125em;
 }

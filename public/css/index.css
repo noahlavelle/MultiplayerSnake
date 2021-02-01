@@ -58,6 +58,17 @@ body {
     border: 0.2em solid #000000;
 }
 
+.box {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    text-align: center;
+    margin-bottom: 25px;
+    border: 0.2em solid #000000;
+}
+
+
 .white {
     background-color: white;
 }
@@ -68,4 +79,8 @@ body {
 
 .pcr-button::after {
     border-radius: 0!important;
+}
+
+canvas {
+    border: 5px solid black;
 }
