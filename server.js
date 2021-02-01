@@ -3,24 +3,18 @@ const http = require('http').Server(app);
 const io = require('socket.io')(http);
 const port = process.env.PORT || 80;
 const fs = require("fs");
-const games : any = {
-}
-
+const games = {};
 app.get('*', (req, res) => {
-    let file
-    let readFile : boolean = true;
-    let url : any = req.url.split("?")[0];
-  
+    let file;
+    let readFile = true;
+    let url = req.url.split("?")[0];
     /\./.test(url) ? file = `./public${url}` : file = `./public${url}/index.html`;
     readFile ? (fs.existsSync(file) ? res.sendFile(`${__dirname}${file.replace('.', '')}`) : res.redirect('/?a')) : false;
 });
-
 io.on("connection", (socket) => {
     socket.on("gameslist", () => {
-        
         socket.emit("gameslist", Object.keys(games));
     });
-
     socket.on("creategame", (refreshTime, time) => {
         const game = new Game(socket, refreshTime, time);
         if (time == 150) {
@@ -28,33 +22,27 @@ io.on("connection", (socket) => {
         }
         socket.emit("game-data", [refreshTime, game.id, time]);
     });
-
     socket.on("joingame", (id) => {
-        const game : Game = games[id];
+        const game = games[id];
         socket.emit("game-data", [game.refreshTime, game.id]);
         game.players.push(socket);
         game.addPlayer(socket);
-    })
-})
-
+    });
+});
 http.listen(port, () => {
     console.log('listening on *' + port);
 });
-
 // @ts-ignore
 class Game {
-    players : any[] = [];
-    playerData = {}
-    id : string;
-    min : number = 0;
-    max : number = 950;
-    gridSize : number = 30;
-    foodCoords : number[] = [];
-    refreshTime: number = 100;
-    running : boolean = true;
-    time : number;
-
-    constructor (socket, refreshTime, time) {
+    constructor(socket, refreshTime, time) {
+        this.players = [];
+        this.playerData = {};
+        this.min = 0;
+        this.max = 950;
+        this.gridSize = 30;
+        this.foodCoords = [];
+        this.refreshTime = 100;
+        this.running = true;
         this.refreshTime = refreshTime;
         this.time = time;
         this.players.push(socket);
@@ -62,55 +50,46 @@ class Game {
         this.createEvents();
         this.tick();
         this.createFood();
-
         setTimeout(() => {
             this.running = false;
-        }, time * 1000)
+        }, time * 1000);
     }
-
     generateID() {
-        this.id = (Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000).toString(); 
+        this.id = (Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000).toString();
         if (games.hasOwnProperty(this.id)) {
             this.generateID;
-        } else {
+        }
+        else {
             games[this.id] = this;
         }
     }
-
     createFood() {
-        let x : number = Math.round(Math.round((Math.random() * (this.max - this.min)) + this.min) / this.gridSize) * this.gridSize
-        let y : number = Math.round(Math.round((Math.random() * (this.max - this.min)) + this.min) / this.gridSize) * this.gridSize
+        let x = Math.round(Math.round((Math.random() * (this.max - this.min)) + this.min) / this.gridSize) * this.gridSize;
+        let y = Math.round(Math.round((Math.random() * (this.max - this.min)) + this.min) / this.gridSize) * this.gridSize;
         this.foodCoords = [x, y];
         for (let socket of this.players) {
             socket.emit("new-food", [x, y]);
         }
     }
-
     createEvents() {
         for (let socket of this.players) {
             socket.on("send-data", (data) => {
                 this.playerData[socket.id] = data;
             });
-
             socket.on("new-food", () => {
                 this.createFood();
             });
         }
     }
-
     addPlayer(socket) {
         socket.on("send-data", (data) => {
             this.playerData[socket.id] = data;
         });
-
-        
         socket.on("new-food", () => {
             this.createFood();
         });
-
         socket.emit("new-food", this.foodCoords);
     }
-
     tick() {
         if (this.running) {
             for (let socket of this.players) {
@@ -118,7 +97,7 @@ class Game {
             }
             setTimeout(() => {
                 this.tick();
-            }, this.refreshTime)
+            }, this.refreshTime);
         }
     }
 }
