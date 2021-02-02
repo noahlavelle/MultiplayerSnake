@@ -20,7 +20,7 @@ io.on("connection", (socket) => {
         if (time == 180) {
             time = undefined;
         }
-        socket.emit("game-data", [refreshTime, game.id, time]);
+        socket.emit("game-data", [refreshTime, game.id, time, getLength]);
     });
     socket.on("joingame", (id) => {
         const game = games[id];

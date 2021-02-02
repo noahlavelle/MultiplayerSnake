@@ -18,6 +18,8 @@
     canvas {
         width:85vw!important;
         height: 85vw!important;
+        position: absolute;
+        bottom: 10px;
     }
 
     #linkbuttons {
