@@ -30,10 +30,12 @@ io.on("connection", (socket) => {
         socket.emit("game-data", [refreshTime, game.id, time, getLength]);
     });
     socket.on("joingame", (id) => {
-        const game = games[id];
-        socket.emit("game-data", [game.refreshTime, game.id, game.time, game.getLength]);
-        game.players.push(socket);
-        game.addPlayer(socket);
+        try {
+            const game = games[id];
+            socket.emit("game-data", [game.refreshTime, game.id, game.time, game.getLength]);
+            game.players.push(socket);
+            game.addPlayer(socket);
+        } catch {};
     });
     socket.on("leavegame", (leaveSocket, id) => {
         const game = games[id];
@@ -119,12 +121,15 @@ class Game {
     }
     tick() {
         if (this.running) {
-            for (let socket of this.players) {
-                socket.emit("player-data", this.playerData);
-            }
+            setTimeout(() => {
+                for (let socket of this.players) {
+                    socket.emit("player-data", this.playerData);
+                }
+            }, 10);
+            
             setTimeout(() => {
                 this.tick();
-            }, this.refreshTime);
+            }, this.refreshTime - 10);
         }
     }
 }
