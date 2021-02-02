@@ -25,10 +25,9 @@
         left: 10px;
     }
 
-    #gamebuttons {
-        position: absolute;
-        top: 50px;
-        left: 0;
+    #gamebuttons button {
+        width: 260px!important;
+        display: block;
     }
 }
     
@@ -39,7 +38,7 @@
 
     #linkbuttons {
         top: 10px;
-        left: 48%;
+        right: 10px;
     }
 
 }

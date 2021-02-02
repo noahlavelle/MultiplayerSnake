@@ -34,6 +34,37 @@ class Snake {
             "s": [0, 1],
             "d": [1, 0]
         }
+
+        let touchStart : number[];
+
+        document.addEventListener("touchstart", (event) => {
+            touchStart = [event.touches[0].clientX, event.touches[0].clientY];
+        })
+
+        document.addEventListener("touchend", event => {
+            let touchEnd : number[] = [event.changedTouches[0].clientX, event.changedTouches[0].clientY]
+            let angleDeg : number = Math.round((Math.atan2(touchStart[0] - touchEnd[0], touchStart[1] - touchEnd[1]) * 180 / Math.PI) / 90) * 90;
+            switch (angleDeg) {
+                case 0:
+                case -0:
+                    if (arrayEquals([0, 1], this.moveDir.map(Math.abs))) return;
+                    this.moveDir = [0, -1]
+                break;
+                case -90:
+                    if (arrayEquals([1, 0], this.moveDir.map(Math.abs))) return;
+                    this.moveDir = [1, 0]
+                break;
+                case 180:
+                case -180:
+                    if (arrayEquals([0, 1], this.moveDir.map(Math.abs))) return;
+                    this.moveDir = [0, 1]
+                break;
+                case 90:
+                    if (arrayEquals([1, 0], this.moveDir.map(Math.abs))) return;
+                    this.moveDir = [-1, 0]
+                break;
+            }
+        })
         
         $(document).on("keydown", (event) => {
             if (this.acceptingInput && inputMaps.hasOwnProperty(event.key)) {

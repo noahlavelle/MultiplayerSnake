@@ -164,6 +164,9 @@ class SpecialButtons {
         $("#play").on("click", () => {
             this.play();
         });
+        $("#fullscreen").on("click", () => {
+            this.fullscreen();
+        });
     }
     joinGame() {
         // @ts-ignore
@@ -209,6 +212,16 @@ class SpecialButtons {
         // @ts-ignore
         socket.emit("creategame", 100 / ((Number.parseInt($("#gamespeed").val())) / 100), Number.parseInt($("#gametime").val()), Boolean($("#getlength").val()));
         game = new Game;
+    }
+    fullscreen() {
+        // @ts-ignore
+        if (document.webkitIsFullScreen || document.mozFullScreen || document.fullscreen || false) {
+            document.exitFullscreen();
+        }
+        else {
+            document.documentElement.requestFullscreen();
+        }
+        ;
     }
 }
 class Slider {
