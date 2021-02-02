@@ -146,13 +146,13 @@ class Game {
             }
             // Send data to server
             socket.emit("send-data", ["name", this.playerColor, this.snake.tail]);
-            this.draw();
             for (let key in this.allPlayersData) {
                 if (this.snake != null && !arrayEquals(this.snake.moveDir, [0, 0]) && JSON.stringify(this.allPlayersData[key][2]).indexOf(JSON.stringify(this.snake.coords)) !== -1)
                     this.die(key);
                 if (this.snake != null && !this.snake.isInvulnerable && ((this.snake.coords[0] > 980 || this.snake.coords[0] < 0) || (this.snake.coords[1] > 980 || this.snake.coords[1] < 0)))
                     this.die();
             }
+            this.draw();
         }
         if (this.running) {
             setTimeout(() => {
