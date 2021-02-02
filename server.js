@@ -125,11 +125,11 @@ class Game {
                 for (let socket of this.players) {
                     socket.emit("player-data", this.playerData);
                 }
-            }, 10);
+            }, 50);
             
             setTimeout(() => {
                 this.tick();
-            }, this.refreshTime - 10);
+            }, this.refreshTime - 50);
         }
     }
 }

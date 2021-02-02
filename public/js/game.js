@@ -84,6 +84,7 @@ class Game {
         socket.on("player-data", (pd) => {
             if (this.running) {
                 this.allPlayersData = pd;
+                this.draw();
             }
         });
         socket.on("new-food", (coords) => {
@@ -152,7 +153,6 @@ class Game {
                 if (this.snake != null && !this.snake.isInvulnerable && ((this.snake.coords[0] > 980 || this.snake.coords[0] < 0) || (this.snake.coords[1] > 980 || this.snake.coords[1] < 0)))
                     this.die();
             }
-            this.draw();
         }
         if (this.running) {
             setTimeout(() => {
