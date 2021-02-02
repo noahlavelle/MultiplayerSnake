@@ -2,8 +2,8 @@
 	 outline: 0;
 	 border: 0;
 	 border-radius: 500px;
-	 width: 400px;
-	 max-width: 100%;
+	 width: 90%;
+	 max-width: 400px;
 	 margin: 24px 0 16px;
 	 transition: box-shadow 0.2s ease-in-out;
 }

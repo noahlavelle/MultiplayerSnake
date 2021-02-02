@@ -1,27 +1,9 @@
-@media only screen and (max-device-width: 480px) {
-
-    .buttons button {
-        width: 50vw;
-    }
-
-    .buttons {
-        margin-left: 15%;
-    }
-}
-
-@media only screen and (min-device-width: 480px) {
-    .buttons button {
-        width: 600px;
-    }
-
-    .buttons {
-        margin-left: 100px;
-    }
-    
-}
-
 .buttons a {
     text-decoration: none;
+}
+
+.buttons {
+    text-align: center;
 }
 
 .buttons button {
@@ -31,10 +13,11 @@
     font: 600 1.2rem 'Montserrat', sans-serif;
     letter-spacing: 0.125em;
     margin-top: 0.5rem;
+    width: 90%;
+    max-width: 600px;
     padding: 0.5em 0.75em;
     position: relative;
     text-transform: uppercase;
-    display: block;
 }
 .buttons button:before, .buttons button:after {
     content: '';
@@ -68,10 +51,4 @@
     right: 0;
     top: 0;
     z-index: -1;
-}
-
-.btn-bottom {
-    display: block;
-    margin-top: 10%;
-    position: absolute;
 }

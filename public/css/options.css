@@ -1,14 +1,12 @@
-.options {
+#picker {
     display: block;
     text-align: center;
-}
 
-#picker {
     background-color: white;
     border: 0.15em solid #000000;
     padding-bottom: 8px;
     padding-top: 8px;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
     text-transform: uppercase;
     font: 600 1.2rem 'Montserrat', sans-serif;
     color: black;
