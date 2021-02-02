@@ -8,9 +8,16 @@ app.get('*', (req, res) => {
     let file;
     let readFile = true;
     let url = req.url.split("?")[0];
+
     /\./.test(url) ? file = `./public${url}` : file = `./public${url}/index.html`;
+
+    if (url === "/home" || url === "/creategame" || url === "/options" || url === "/game") {
+        file  = "./public/index.html"
+    }
+
     readFile ? (fs.existsSync(file) ? res.sendFile(`${__dirname}${file.replace('.', '')}`) : res.redirect('/?a')) : false;
 });
+
 io.on("connection", (socket) => {
     socket.on("gameslist", () => {
         socket.emit("gameslist", Object.keys(games));
@@ -28,6 +35,10 @@ io.on("connection", (socket) => {
         game.players.push(socket);
         game.addPlayer(socket);
     });
+    socket.on("leavegame", (leaveSocket, id) => {
+        const game = games[id];
+        game.players.splice(game.players.indexOf(leaveSocket), 1);
+    })
 });
 http.listen(port, () => {
     console.log('listening on *' + port);

@@ -1,11 +1,15 @@
-const pages = ["#home", "#creategame", "#options, #game"];
-const titles = ["Snake", "Snake | Create Gane", "Snake | Options, Snake | Game"];
+const pages = ["/home", "/creategame", "/options", "/game"];
+const titles = ["Snake", "Snake | Create Gane", "Snake | Options", "Snake | Game"];
 const errorCodes = ["?a", "?b"];
 let game;
+let linkHandling;
+let colorHandling;
+let specialButtons;
 class LinkHandling {
     constructor() {
         this.eventListner();
         this.errorHandling = new ErrorHandling();
+        this.handle();
     }
     eventListner() {
         this.handle();
@@ -13,27 +17,30 @@ class LinkHandling {
             this.handle();
             this.errorHandling.handle();
         };
+        $('a').on("click", (event) => {
+            event.preventDefault();
+            // @ts-ignore
+            history.pushState(null, null, event.currentTarget.href);
+            this.handle();
+        });
     }
     handle() {
         this.hideAll();
-        if (pages.includes(location.hash))
-            document.title = titles[pages.indexOf(location.hash)];
-        if (location.hash == "") {
+        if (pages.includes(location.pathname))
+            document.title = titles[pages.indexOf(location.pathname)];
+        if (location.pathname == "/") {
             $('#home').show();
         }
         else {
-            $(location.hash).show();
+            $(location.pathname.replace("/", "#")).show();
         }
-        if (game != undefined && location.hash != "#game") {
+        if (game != undefined && location.pathname != "/game") {
             game.running = false;
-            setTimeout(() => {
-                socket.emit("send-data", ["", "", []]);
-            }, 100);
         }
     }
     hideAll() {
         pages.forEach((page) => {
-            $(page).hide();
+            $(page.replace("/", "#")).hide();
         });
     }
 }
@@ -167,6 +174,9 @@ class SpecialButtons {
         $("#fullscreen").on("click", () => {
             this.fullscreen();
         });
+        $("#gameinfo").on("click", () => {
+            this.copyLink();
+        });
         $("#controls").children().toArray().forEach(element => {
             $(element).on("focus", () => {
                 this.focusElement = element;
@@ -182,6 +192,18 @@ class SpecialButtons {
                 keyBinds[$(this.focusElement).attr("control")] = event.key;
                 localStorage.setItem("keybinds", JSON.stringify(keyBinds));
             }
+        });
+    }
+    copyLink() {
+        // @ts-ignore
+        Swal.fire({
+            title: 'Link Copied',
+            icon: 'success',
+            timer: 800,
+            timerProgressBar: true,
+            position: 'bottom-end',
+            showConfirmButton: false,
+            backdrop: `rgba(0, 0, 0, 0)`
         });
     }
     joinGame() {
@@ -218,7 +240,8 @@ class SpecialButtons {
             if (result.isConfirmed) {
                 if (result != undefined) {
                     socket.emit("joingame", result.value);
-                    location.hash = "#game";
+                    history.pushState(null, null, "game");
+                    linkHandling.handle();
                     game = new Game;
                 }
             }
@@ -263,9 +286,9 @@ class Slider {
     }
 }
 jQuery(() => {
-    const linkHandling = new LinkHandling();
-    const colorHandling = new ColorHandling();
-    const specialButtons = new SpecialButtons();
+    linkHandling = new LinkHandling();
+    colorHandling = new ColorHandling();
+    specialButtons = new SpecialButtons();
     if (localStorage.getItem("keybinds") == null) {
         let keyBindsObject = {
             "up": "w",

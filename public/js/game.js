@@ -85,7 +85,6 @@ class Game {
             if (this.running) {
                 this.allPlayersData = pd;
             }
-            this.draw();
         });
         socket.on("new-food", (coords) => {
             if (this.running) {
@@ -151,7 +150,7 @@ class Game {
             for (let key in this.allPlayersData) {
                 if (this.snake != null && !arrayEquals(this.snake.moveDir, [0, 0]) && JSON.stringify(this.allPlayersData[key][2]).indexOf(JSON.stringify(this.snake.coords)) !== -1)
                     this.die(key);
-                if (this.snake != null && !this.snake.isInvulnerable && ((this.snake.coords[0] > 990 || this.snake.coords[0] < 0) || (this.snake.coords[1] > 990 || this.snake.coords[1] < 0)))
+                if (this.snake != null && !this.snake.isInvulnerable && ((this.snake.coords[0] > 980 || this.snake.coords[0] < 0) || (this.snake.coords[1] > 980 || this.snake.coords[1] < 0)))
                     this.die();
             }
         }
@@ -164,6 +163,7 @@ class Game {
             }, this.refreshTime);
         }
         else {
+            socket.emit("leavegame", socket, game.gameCode);
             socket.emit("send-data", ["", "", []]);
         }
     }
@@ -174,15 +174,11 @@ class Game {
             draw(this.food.coords[0], this.food.coords[1], this.gridSize, this.foodColor);
         }
         if (this.snake != null) {
-            for (let coord of this.snake.tail) {
-                draw(coord[0], coord[1], this.gridSize, this.playerColor);
-            }
+            renderSnake(this.snake.tail, this.playerColor, this.gridSize);
         }
         for (let key in this.allPlayersData) {
-            for (let coord of this.allPlayersData[key][2]) {
-                if (key != socket.id) {
-                    draw(coord[0], coord[1], this.gridSize, this.allPlayersData[key][1]);
-                }
+            if (key != socket.id) {
+                renderSnake(this.allPlayersData[key][2], this.allPlayersData[key][1], this.gridSize);
             }
         }
     }
