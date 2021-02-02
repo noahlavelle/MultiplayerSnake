@@ -108,6 +108,8 @@ class Game {
             if (this.running) {
                 this.allPlayersData = pd;
             }
+
+            this.draw();
         })
         socket.on("new-food", (coords) => {
             if (this.running) {
@@ -172,30 +174,12 @@ class Game {
 
             // Send data to server
             socket.emit("send-data", ["name", this.playerColor, this.snake.tail]);
-        }
-
-            // Draw
-            clear();
-            if (this.food != null) {
-                draw (this.food.coords[0], this.food.coords[1], this.gridSize, this.foodColor);
-            }
-
-            if (this.snake != null) {
-                for (let coord of this.snake.tail) {
-                    draw(coord[0], coord[1], this.gridSize, this.playerColor);
-                }
-            }
 
             for (let key in this.allPlayersData) {
-                for (let coord of this.allPlayersData[key][2]) {
-                    if (key != socket.id) {
-                        draw(coord[0], coord[1], this.gridSize, this.allPlayersData[key][1]);
-                    }
-                }
-
                 if (this.snake != null && !arrayEquals(this.snake.moveDir, [0, 0]) && JSON.stringify(this.allPlayersData[key][2]).indexOf(JSON.stringify(this.snake.coords)) !== -1) this.die(key);
                 if (this.snake != null && !this.snake.isInvulnerable && ((this.snake.coords[0] > 990 || this.snake.coords[0] < 0) || (this.snake.coords[1] > 990 || this.snake.coords[1] < 0))) this.die();
             }
+        }
 
         if (this.running) {
             setTimeout(() => {
@@ -206,6 +190,28 @@ class Game {
             }, this.refreshTime)
         } else {
             socket.emit("send-data", ["", "", []]);
+        }
+    }
+
+    draw () {
+        // Draw
+        clear();
+        if (this.food != null) {
+            draw (this.food.coords[0], this.food.coords[1], this.gridSize, this.foodColor);
+        }
+
+        if (this.snake != null) {
+            for (let coord of this.snake.tail) {
+                draw(coord[0], coord[1], this.gridSize, this.playerColor);
+            }
+        }
+
+        for (let key in this.allPlayersData) {
+            for (let coord of this.allPlayersData[key][2]) {
+                if (key != socket.id) {
+                    draw(coord[0], coord[1], this.gridSize, this.allPlayersData[key][1]);
+                }
+            }
         }
     }
 
