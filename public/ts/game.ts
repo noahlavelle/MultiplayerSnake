@@ -32,8 +32,8 @@ class Snake {
         const inputMaps = {
             [keyBinds["up"]]: [0, -1],
             [keyBinds["left"]]: [-1, 0],
-            [keyBinds["right"]]: [0, 1],
-            [keyBinds["down"]]: [1, 0]
+            [keyBinds["down"]]: [0, 1],
+            [keyBinds["right"]]: [1, 0]
         }
 
         let touchStart : number[];
