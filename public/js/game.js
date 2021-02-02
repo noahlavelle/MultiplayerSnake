@@ -128,6 +128,9 @@ class Game {
     }
     tick() {
         if (this.snake != null) {
+            if (arrayEquals([0, 0], this.snake.coords) && (arrayEquals(this.snake.moveDir, [0, -1]) || arrayEquals(this.snake.moveDir, [-1, 0]))) {
+                this.snake.moveDir = [0, 0];
+            }
             // New Coords
             this.snake.coords[0] += this.snake.moveDir[0] * this.gridSize;
             this.snake.coords[1] += this.snake.moveDir[1] * this.gridSize;
@@ -144,6 +147,7 @@ class Game {
             }
             // Send data to server
             socket.emit("send-data", ["name", this.playerColor, this.snake.tail]);
+            this.draw();
             for (let key in this.allPlayersData) {
                 if (this.snake != null && !arrayEquals(this.snake.moveDir, [0, 0]) && JSON.stringify(this.allPlayersData[key][2]).indexOf(JSON.stringify(this.snake.coords)) !== -1)
                     this.die(key);
