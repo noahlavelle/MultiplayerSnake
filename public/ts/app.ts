@@ -318,6 +318,15 @@ jQuery(() => {
             "right": "d"
         }
         localStorage.setItem("keybinds", JSON.stringify(keyBindsObject));
+    } else {
+        let keyBinds = JSON.parse(localStorage.getItem("keybinds"));
+        Object.keys(keyBinds).forEach((key) => {
+            $("#controls").children().toArray().forEach((element) => {
+                if ($(element).attr("control") === key) {
+                    $(element).html(keyBinds[key].toUpperCase());
+                }
+            })
+        })
     }
 });
 
