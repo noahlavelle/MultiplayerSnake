@@ -175,6 +175,8 @@ class ColorHandling {
 }
 
 class SpecialButtons {
+    focusElement : Element;
+
     constructor () {
         this.eventHandlers()
     }
@@ -191,6 +193,25 @@ class SpecialButtons {
         $("#fullscreen").on("click", () => {
             this.fullscreen();
         });
+
+        $("#controls").children().toArray().forEach(element => {
+            $(element).on("focus", () => {
+                this.focusElement = element;
+            });
+
+            $(element).on("focusout", () => {
+                this.focusElement = null;
+            });
+        });
+
+        $(document).on("keypress", (event) => {
+            if (this.focusElement != null) {
+                $(this.focusElement).html(event.key.toUpperCase());
+                let keyBinds = JSON.parse(localStorage.getItem("keybinds"));
+                keyBinds[$(this.focusElement).attr("control")] = event.key;
+                localStorage.setItem("keybinds", JSON.stringify(keyBinds));
+            }
+        })
     }
 
     joinGame() {
@@ -288,6 +309,16 @@ jQuery(() => {
     const linkHandling = new LinkHandling ();
     const colorHandling = new ColorHandling ();
     const specialButtons = new SpecialButtons();
+
+    if (localStorage.getItem("keybinds") == null) {
+        let keyBindsObject = {
+            "up": "w",
+            "down": "s",
+            "left": "a",
+            "right": "d"
+        }
+        localStorage.setItem("keybinds", JSON.stringify(keyBindsObject));
+    }
 });
 
 $("#creategame > div > .options").children().toArray().forEach((child) => {

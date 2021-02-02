@@ -16,11 +16,12 @@ class Snake {
         this.inputHandling();
     }
     inputHandling() {
+        const keyBinds = JSON.parse(localStorage.getItem("keybinds"));
         const inputMaps = {
-            "w": [0, -1],
-            "a": [-1, 0],
-            "s": [0, 1],
-            "d": [1, 0]
+            [keyBinds["up"]]: [0, -1],
+            [keyBinds["left"]]: [-1, 0],
+            [keyBinds["right"]]: [0, 1],
+            [keyBinds["down"]]: [1, 0]
         };
         let touchStart;
         document.addEventListener("touchstart", (event) => {

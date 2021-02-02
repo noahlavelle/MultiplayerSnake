@@ -95,6 +95,7 @@ body {
     margin-bottom: 25px;
     height: 200px;
     border: 0.2em solid #000000;
+    box-shadow: 2px 3px 2px black;
 }
 
 .box {

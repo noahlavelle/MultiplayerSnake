@@ -11,6 +11,7 @@
     font: 600 1.2rem 'Montserrat', sans-serif;
     color: black;
     letter-spacing: 0.125em;
+    box-shadow: 2px 3px 2px black;
 }
 
 #sliders {

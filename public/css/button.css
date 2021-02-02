@@ -18,6 +18,7 @@
     padding: 0.5em 0.75em;
     position: relative;
     text-transform: uppercase;
+    box-shadow: 2px 3px 2px black;
 }
 .buttons button:before, .buttons button:after {
     content: '';
@@ -51,4 +52,28 @@
     right: 0;
     top: 0;
     z-index: -1;
+}
+
+.control {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: white;
+    border: 3px solid black;
+    box-shadow: 2px 3px 2px black;
+    font-weight: bold;
+    margin-right: 20px;
+    margin-left: 20px;
+}
+
+.control:focus {
+    border: 3px dotted black;
+}
+
+.control:hover {
+    cursor: pointer;
+}
+
+.control:focus {
+    outline: none;
 }
