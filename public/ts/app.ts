@@ -42,10 +42,11 @@ class LinkHandling {
         this.hideAll();
         if (pages.includes(location.pathname)) document.title = titles[pages.indexOf(location.pathname)];
         if (location.hash.replace("#", "").length == 4 && !isNaN(Number.parseInt(location.hash.replace("#", "")))) {
-            socket.emit("gameslist")
-            socket.on("gameslist", (gameslist) => {
-                if (gameslist.includes(location.pathname.split("/")[location.pathname.split("/").length - 1])) {
-                    location.pathname = `/play/${location.pathname.split("/")[location.pathname.split("/").length - 1]}`
+            let id = location.pathname.split("/")[location.pathname.split("/").length - 1];
+            socket.emit("idExists", id)
+            socket.on("idExists", (exists) => {
+                if (exists) {
+                    location.pathname = `/play/${id}`
                 } else {
                     location.href = `${location.href.split("/")[0]}/?b`
                 }
@@ -248,12 +249,12 @@ class SpecialButtons {
                 // @ts-ignore
                 let id : any = $(Swal.getInput()).val();
                 return new Promise( (resolve, reject) => {
-                    socket.emit("gameslist")
-                    socket.on("gameslist", (gameslist) => {
-                        if (!gameslist.includes(id)) {
-                            reject();
-                        } else {
+                    socket.emit("idExists", id)
+                    socket.on("idExists", (exists) => {
+                        if (exists) {
                             resolve(id);
+                        } else {
+                            reject();
                         }
                     })
                 }).catch(() => {

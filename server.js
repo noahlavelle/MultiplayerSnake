@@ -31,8 +31,8 @@ app.get('*', (req, res) => {
 });
 
 io.on("connection", (socket) => {
-    socket.on("gameslist", () => {
-        socket.emit("gameslist", Object.keys(games));
+    socket.on("idExists", (id) => {
+        socket.emit("idExists", id in games);
     });
 
     socket.on("createGame", (refreshTime, time, getLength, id) => {
@@ -227,7 +227,8 @@ class Game {
                                 length: 0,
                                 alive: false,
                                 tail: [],
-                                color: player.color
+                                color: player.color,
+                                name: player.name
                             }
                             
                             this.emit("die", playerID);
