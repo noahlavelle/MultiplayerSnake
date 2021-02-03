@@ -1,8 +1,10 @@
+// @ts-ignore
+let socket = io();
+
 const pages = ["/home", "/creategame", "/options", "/game"];
 const titles = ["Snake", "Snake | Create Gane", "Snake | Options", "Snake | Game"]
 const errorCodes = ["?a", "?b"]
 
-let game : Game;
 let linkHandling : LinkHandling;
 let colorHandling : ColorHandling;
 let specialButtons : SpecialButtons;
@@ -30,6 +32,10 @@ class LinkHandling {
             history.pushState(null, null, event.currentTarget.href)
             this.handle();
         })
+
+        $(window).on("beforeunload", () => {
+            socket.emit("leave");
+        })
     }
 
     handle () {
@@ -38,11 +44,8 @@ class LinkHandling {
         if (location.hash.replace("#", "").length == 4 && !isNaN(Number.parseInt(location.hash.replace("#", "")))) {
             socket.emit("gameslist")
             socket.on("gameslist", (gameslist) => {
-                if (gameslist.includes(location.hash.replace("#", ""))) {
-                    game = new Game();
-                    socket.emit("joinGame", location.hash.replace("#", ""), colorHandling.playerColor);
-                    
-                    game = new Game;
+                if (gameslist.includes(location.pathname.split("/")[location.pathname.split("/").length - 1])) {
+                    location.pathname = `/play/${location.pathname.split("/")[location.pathname.split("/").length - 1]}`
                 } else {
                     location.href = `${location.href.split("/")[0]}/?b`
                 }
@@ -53,10 +56,6 @@ class LinkHandling {
             $('#home').show();
         } else {
             $(location.pathname.replace("/", "#")).show();
-        }
-    
-        if (game != undefined && location.pathname != "/game") {
-            location.reload();
         }
     }
 
@@ -214,14 +213,6 @@ class SpecialButtons {
             this.play();
         });
 
-        $("#fullscreen").on("click", () => {
-            this.fullscreen();
-        });
-
-        $("#gameInfo").on("click", () => {
-            this.copyLink();
-        })
-
         $("#controls").children().toArray().forEach(element => {
             $(element).on("focus", () => {
                 this.focusElement = element;
@@ -240,26 +231,6 @@ class SpecialButtons {
                 localStorage.setItem("keybinds", JSON.stringify(keyBinds));
             }
         })
-    }
-
-    copyLink() {
-        const el = document.createElement('textarea');
-        el.value = `${location.href}#${game.gameCode.toString()}`;
-        document.body.appendChild(el);
-        el.select();
-        document.execCommand('copy');
-        document.body.removeChild(el);
-
-        // @ts-ignore
-        Swal.fire({
-            title: 'Link Copied',
-            icon: 'success',
-            timer: 800,
-            timerProgressBar: true,
-            position: 'bottom-end',
-            showConfirmButton: false,
-            backdrop: `rgba(0, 0, 0, 0)`
-          })
     }
 
     joinGame() {
@@ -296,30 +267,21 @@ class SpecialButtons {
         }).then((result) => {
             if (result.isConfirmed) {
                 if (result != undefined) {
-                    socket.emit("joinGame", result.value, colorHandling.playerColor);
-                    history.pushState(null, null, "game");
-                    linkHandling.handle();
-                    
-                    game = new Game;
+                    location.pathname = `/play/${result.value}`
                 }
             }
         });
     }
 
-    play() {
-        // @ts-ignore
-        socket.emit("createGame", 100 / ((Number.parseInt($("#gamespeed").val())) / 100), Number.parseInt($("#gametime").val()), Boolean($("#getlength").val()), colorHandling.playerColor);
-        game = new Game;
+    generateID() {
+        return (Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000).toString();
     }
 
-    fullscreen() {
+    play() {
+        let id = this.generateID();
         // @ts-ignore
-        if (document.webkitIsFullScreen || document.mozFullScreen || document.fullscreen || false) {
-            document.exitFullscreen();
-        }
-        else {
-            document.documentElement.requestFullscreen();
-        };
+        socket.emit("createGame", 100 / ((Number.parseInt($("#gamespeed").val())) / 100), Number.parseInt($("#gametime").val()), Boolean($("#getlength").val()), id);
+        location.pathname = `/play/${id}`
     }
 }
 

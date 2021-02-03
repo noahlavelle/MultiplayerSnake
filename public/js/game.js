@@ -1,5 +1,10 @@
 // @ts-ignore
 let socket = io();
+let game;
+jQuery(() => {
+    game = new Game();
+    socket.emit("joinGame", location.pathname.split("/")[location.pathname.split("/").length - 1], localStorage.getItem("player-color") || "#000000");
+});
 class Food {
     constructor(x, y) {
         this.coords = [x, y];
@@ -89,6 +94,34 @@ class Game {
         this.initEvents();
     }
     initEvents() {
+        $("#fullscreen").on("click", () => {
+            // @ts-ignore
+            if (document.webkitIsFullScreen || document.mozFullScreen || document.fullscreen || false) {
+                document.exitFullscreen();
+            }
+            else {
+                document.documentElement.requestFullscreen();
+            }
+            ;
+        });
+        $("#gameInfo").on("click", () => {
+            const el = document.createElement('textarea');
+            el.value = `${location.href}`;
+            document.body.appendChild(el);
+            el.select();
+            document.execCommand('copy');
+            document.body.removeChild(el);
+            // @ts-ignore
+            Swal.fire({
+                title: 'Link Copied',
+                icon: 'success',
+                timer: 800,
+                timerProgressBar: true,
+                position: 'bottom-end',
+                showConfirmButton: false,
+                backdrop: `rgba(0, 0, 0, 0)`
+            });
+        });
         $("#respawn").on("click", () => {
             socket.emit("respawn");
         });

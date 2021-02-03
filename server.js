@@ -9,11 +9,21 @@ app.get('*', (req, res) => {
     let file;
     let readFile = true;
     let url = req.url.split("?")[0];
-    let urlEnd = url.split("/")[url.split("/").length - 1].replace("/", "");
 
     /\./.test(url) ? file = `./public${url}` : file = `./public${url}/index.html`;
 
-    if (url === "/home" || url === "/creategame" || url === "/options" || url === "/game") {
+    if (url.includes("/play")) {
+        let urlEnd = url.split("/")[url.split("/").length - 1].replace("/", "");
+        
+        if (urlEnd in games) {
+            file  = "./public/play.html"
+        } else {
+            res.redirect('/?b');
+            readFile = false;
+        }
+    }
+
+    if (url === "/home" || url === "/creategame" || url === "/options") {
         file  = "./public/index.html"
     }
 
@@ -25,21 +35,12 @@ io.on("connection", (socket) => {
         socket.emit("gameslist", Object.keys(games));
     });
 
-    socket.on("createGame", (refreshTime, time, getLength, color) => {
+    socket.on("createGame", (refreshTime, time, getLength, id) => {
         try {
             const game = new Game(refreshTime, time, getLength);
-            game.players.push(socket);
-            game.snakeData[socket.id] = {
-                moveDir: [0, 0],
-                coords: [0, 0],
-                length: 5,
-                alive: true,
-                tail: [],
-                color: color
-            }
-
-            socket.emit("gameData", game.id);
-            game.addPlayer(socket);
+            games[id] = game;
+            game.id = id;
+            
             game.tick();
         } catch {}
     });
@@ -59,7 +60,7 @@ io.on("connection", (socket) => {
 
             socket.emit("gameData", game.id);
             game.addPlayer(socket);
-        } catch {};
+        } catch {}
     });
 });
 
@@ -89,20 +90,11 @@ class Game {
             */
         }
 
-        this.generateID();
         this.createEvents();
         this.createFood();
         this.timer();
     }
-    generateID() {
-        this.id = (Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000).toString();
-        if (games.hasOwnProperty(this.id)) {
-            this.generateID;
-        }
-        else {
-            games[this.id] = this;
-        }
-    }
+
     createFood() {
         let x = Math.round(Math.round((Math.random() * (this.max - this.min)) + this.min) / this.gridSize) * this.gridSize;
         let y = Math.round(Math.round((Math.random() * (this.max - this.min)) + this.min) / this.gridSize) * this.gridSize;
@@ -117,6 +109,8 @@ class Game {
 
         socket.on("snakeMove", dir => {
             try {
+                if (!this.arrayEquals(dir, [0, 1]) && !this.arrayEquals(dir, [1, 0]) && !this.arrayEquals(dir, [0, -1]) && !this.arrayEquals(dir, [-1, 0]))return;
+
                 this.snakeData[socket.id].moveDir = dir;
                 clearTimeout(timeout);
 
@@ -126,6 +120,11 @@ class Game {
                 }, 300000)
             } catch {}
         });
+
+        socket.on("leave", () => {
+            this.players.splice(this.players.indexOf(socket.id), 1);
+            delete this.snakeData[socket.id];
+        })
 
         socket.on("respawn", () => {
             this.snakeData[socket.id] =  {
