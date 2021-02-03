@@ -1,5 +1,5 @@
 :root {
-    --gradient: linear-gradient(45deg, #836db8 0%, #fbc2eb 100%);
+    --gradient: linear-gradient(45deg, #4facfe 0%, #00f2fe 100%);;
 }
 
 @media only screen and (max-device-width : 640px) {
