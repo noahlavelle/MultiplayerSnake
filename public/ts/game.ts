@@ -81,9 +81,9 @@ class Snake {
         
         $(document).on("keydown", (event) => {
             if (this.acceptingInput && event.key in inputMaps) {
+                this.acceptingInput = false;
                 if (this.arrayEquals(inputMaps[event.key].map(Math.abs), this.moveDir.map(Math.abs))) return;
                 this.moveDir = inputMaps[event.key] != undefined ? inputMaps[event.key] : this.moveDir;
-                this.acceptingInput = false;
                 
                 if ((this.arrayEquals(this.moveDir, [-1, 0]) || this.arrayEquals(this.moveDir, [0, -1])) && this.arrayEquals(this.coords, [0, 0])) this.moveDir = [0, 0]
                 socket.emit("snakeMove", this.moveDir);
@@ -106,10 +106,6 @@ class Game {
 
     playerColor : string = localStorage.getItem("player-color") || "#A686C7";
     foodColor : string = localStorage.getItem("food-color") || "#FE6F61";
-    
-    /* Player data Sructure:
-    [[name], [color], [corod], [tailcoords]]
-    */
 
     constructor () {
         this.snake = new Snake(0, 0, 5);

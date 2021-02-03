@@ -66,10 +66,10 @@ class Snake {
         });
         $(document).on("keydown", (event) => {
             if (this.acceptingInput && event.key in inputMaps) {
+                this.acceptingInput = false;
                 if (this.arrayEquals(inputMaps[event.key].map(Math.abs), this.moveDir.map(Math.abs)))
                     return;
                 this.moveDir = inputMaps[event.key] != undefined ? inputMaps[event.key] : this.moveDir;
-                this.acceptingInput = false;
                 if ((this.arrayEquals(this.moveDir, [-1, 0]) || this.arrayEquals(this.moveDir, [0, -1])) && this.arrayEquals(this.coords, [0, 0]))
                     this.moveDir = [0, 0];
                 socket.emit("snakeMove", this.moveDir);
@@ -78,9 +78,6 @@ class Snake {
     }
 }
 class Game {
-    /* Player data Sructure:
-    [[name], [color], [corod], [tailcoords]]
-    */
     constructor() {
         this.allPlayersData = {};
         this.gridSize = 30;

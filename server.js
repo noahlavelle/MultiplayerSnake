@@ -200,27 +200,24 @@ class Game {
             });
 
             objectEntries.forEach(player => {
+                let playerID = player[0];
                 player = player[1];
 
-                if (player.alive) {
-                    Object.keys(this.snakeData).some(key => {
-                        if (key !== "food" && key !== "time")  {
-                            this.snakeData[key].tail.forEach(coord => {
-                                if (!this.arrayEquals(player.moveDir, [0, 0]) && this.arrayEquals(coord, player.coords)) {
-                                        this.snakeData[key] =  {
-                                            moveDir: [0, 0],
-                                            coords: [0, 0],
-                                            length: 0,
-                                            alive: false,
-                                            tail: [],
-                                            color: player.color
-                                        }
-            
-                                        this.emit("die", key);
-                                    }
-                                });
+                if (player.alive && !this.arrayEquals(player.moveDir, [0, 0])) {
+                    objectEntries.forEach(playerCollisionCheck => {
+                        if (playerCollisionCheck[1].alive && JSON.stringify(playerCollisionCheck[1].tail).includes(JSON.stringify(player.coords))) {
+                            this.snakeData[playerID] =  {
+                                moveDir: [0, 0],
+                                coords: [0, 0],
+                                length: 0,
+                                alive: false,
+                                tail: [],
+                                color: player.color
                             }
-                    }); 
+                            
+                            this.emit("die", playerID);
+                        }
+                    })
                 }
             })
 
@@ -230,9 +227,9 @@ class Game {
         }, this.refreshTime)
     }
 
-    emit (emits, key) {
+    emit (emits, socketID) {
         this.players.some(socket => {
-            if (socket.id == key) {
+            if (socket.id == socketID) {
                 socket.emit(emits);
             }
         })
