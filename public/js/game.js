@@ -11,13 +11,13 @@ jQuery(() => {
         inputAttributes: {
             autocapitalize: 'off'
         },
+        allowOutsideClick: false,
         confirmButtonText: 'Play',
         showLoaderOnConfirm: true,
         preConfirm: () => {
             // @ts-ignore
             let name = $(Swal.getInput()).val();
             return new Promise((resolve, reject) => {
-                console.log(name.trim());
                 if (name.length > 16 || !name.trim())
                     reject();
                 else
@@ -27,7 +27,6 @@ jQuery(() => {
                 Swal.showValidationMessage(`Name invalid (Max 16 Characters)`);
             });
         },
-        allowOutsideClick: true
     }).then((name) => {
         socket.emit("joinGame", location.pathname.split("/")[location.pathname.split("/").length - 1], localStorage.getItem("player-color") || "#0096C7", name.value);
     });
@@ -114,7 +113,6 @@ class Game {
         this.allPlayersData = {};
         this.gridSize = 30;
         this.running = true;
-        this.refreshTime = 100;
         this.playerColor = localStorage.getItem("player-color") || "#A686C7";
         this.foodColor = localStorage.getItem("food-color") || "#FE6F61";
         this.snake = new Snake(0, 0, 5);
@@ -146,7 +144,7 @@ class Game {
                 timerProgressBar: true,
                 position: 'bottom-end',
                 showConfirmButton: false,
-                backdrop: `rgba(0, 0, 0, 0)`
+                backdrop: false
             });
         });
         $("#respawn").on("click", () => {
@@ -159,6 +157,7 @@ class Game {
         socket.on("drawGame", snakeData => {
             if (!this.running)
                 return;
+            this.snake.acceptingInput = true;
             let player;
             clear();
             for (player of Object.entries(snakeData)) {
@@ -175,7 +174,6 @@ class Game {
                 }
                 player = player[1];
                 if (player.alive) {
-                    this.snake.acceptingInput = true;
                     renderSnake(player.tail, player.color, this.gridSize, player.coords, player.name);
                 }
             }

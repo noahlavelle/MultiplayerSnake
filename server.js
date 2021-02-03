@@ -174,7 +174,6 @@ class Game {
 
     tick() {
         setInterval(() => {
-            // if (!this.running) return;
             let objectEntries = Object.entries(this.snakeData);
 
             objectEntries.forEach(playerO => {
@@ -221,6 +220,10 @@ class Game {
                 if (player.alive && !this.arrayEquals(player.moveDir, [0, 0])) {
                     objectEntries.forEach(playerCollisionCheck => {
                         if (playerCollisionCheck[1].alive && JSON.stringify(playerCollisionCheck[1].tail).includes(JSON.stringify(player.coords))) {
+                            if (this.getLength) {
+                                this.snakeData[playerCollisionCheck[0]].length += this.snakeData[playerID].length;
+                            }
+
                             this.snakeData[playerID] =  {
                                 moveDir: [0, 0],
                                 coords: [0, 0],
@@ -230,12 +233,12 @@ class Game {
                                 color: player.color,
                                 name: player.name
                             }
-                            
+
                             this.emit("die", playerID);
                         }
                     })
                 }
-            })
+            });
 
             this.players.forEach(socket => {
                 socket.emit("drawGame", this.snakeData);
