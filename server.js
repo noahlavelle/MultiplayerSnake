@@ -3,8 +3,8 @@ const http = require('http').Server(app);
 const io = require('socket.io')(http);
 const port = process.env.PORT || 80;
 const fs = require("fs");
-const { emit } = require('process');
 const games = {};
+
 app.get('*', (req, res) => {
     let file;
     let readFile = true;
@@ -26,20 +26,22 @@ io.on("connection", (socket) => {
     });
 
     socket.on("createGame", (refreshTime, time, getLength, color) => {
-        const game = new Game(refreshTime, time, getLength);
-        game.players.push(socket);
-        game.snakeData[socket.id] = {
-            moveDir: [0, 0],
-            coords: [0, 0],
-            length: 5,
-            alive: true,
-            tail: [],
-            color: color
-        }
+        try {
+            const game = new Game(refreshTime, time, getLength);
+            game.players.push(socket);
+            game.snakeData[socket.id] = {
+                moveDir: [0, 0],
+                coords: [0, 0],
+                length: 5,
+                alive: true,
+                tail: [],
+                color: color
+            }
 
-        socket.emit("gameData", game.id);
-        game.addPlayer(socket);
-        game.tick();
+            socket.emit("gameData", game.id);
+            game.addPlayer(socket);
+            game.tick();
+        } catch {}
     });
 
     socket.on("joinGame", (id, color) => {
@@ -111,8 +113,18 @@ class Game {
     }
 
     events(socket) {
+        let timeout;
+
         socket.on("snakeMove", dir => {
-            this.snakeData[socket.id].moveDir = dir;
+            try {
+                this.snakeData[socket.id].moveDir = dir;
+                clearTimeout(timeout);
+
+                timeout = setTimeout(() => {
+                    socket.emit("gameEnd");
+                    delete games[this.id];
+                }, 300000)
+            } catch {}
         });
 
         socket.on("respawn", () => {
@@ -148,6 +160,7 @@ class Game {
                 if (this.time == 0) {
                     this.players.forEach((socket) => {
                         socket.emit("gameEnd");
+                        delete games[this.id];
                     })
                 }
             }
