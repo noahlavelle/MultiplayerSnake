@@ -135,7 +135,7 @@ class Game {
                 tail: [],
                 alive: true,
                 color: this.snakeData[socket.id].color,
-                name: this.snakeData[socket.id].name
+                name: this.snakeData[socket.id].name,
             }
         })
     }
