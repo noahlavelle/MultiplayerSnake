@@ -28,6 +28,19 @@ class LinkHandling {
         this.hideAll();
         if (pages.includes(location.pathname))
             document.title = titles[pages.indexOf(location.pathname)];
+        if (location.hash.replace("#", "").length == 4 && !isNaN(Number.parseInt(location.hash.replace("#", "")))) {
+            socket.emit("gameslist");
+            socket.on("gameslist", (gameslist) => {
+                if (gameslist.includes(location.hash.replace("#", ""))) {
+                    game = new Game();
+                    socket.emit("joinGame", location.hash.replace("#", ""), colorHandling.playerColor);
+                    game = new Game;
+                }
+                else {
+                    location.href = `${location.href.split("/")[0]}/?b`;
+                }
+            });
+        }
         if (location.pathname == "/") {
             $('#home').show();
         }
@@ -35,7 +48,7 @@ class LinkHandling {
             $(location.pathname.replace("/", "#")).show();
         }
         if (game != undefined && location.pathname != "/game") {
-            game.running = false;
+            location.reload();
         }
     }
     hideAll() {
@@ -70,8 +83,9 @@ class ErrorHandling {
             else if (error == '?c') {
                 // @ts-ignore
                 Swal.fire({
-                    icon: 'error',
-                    title: 'The Game has timed out'
+                    title: 'Time Up',
+                    footer: `<div>You have been returned to the home screen</div>`,
+                    confirmButtonText: 'Home',
                 });
             }
             ;
@@ -154,7 +168,9 @@ class ColorHandling {
                 try {
                     localStorage.setItem(child.getAttribute("value"), color.toHEXA().toString());
                 }
-                catch (_a) { }
+                catch (_a) {
+                    localStorage.setItem(child.getAttribute("value"), $(child).attr("default"));
+                }
                 ;
             });
         });
@@ -165,7 +181,7 @@ class SpecialButtons {
         this.eventHandlers();
     }
     eventHandlers() {
-        $("#joingame").on("click", () => {
+        $("#joinGame").on("click", () => {
             this.joinGame();
         });
         $("#play").on("click", () => {
@@ -174,7 +190,7 @@ class SpecialButtons {
         $("#fullscreen").on("click", () => {
             this.fullscreen();
         });
-        $("#gameinfo").on("click", () => {
+        $("#gameInfo").on("click", () => {
             this.copyLink();
         });
         $("#controls").children().toArray().forEach(element => {
@@ -195,6 +211,12 @@ class SpecialButtons {
         });
     }
     copyLink() {
+        const el = document.createElement('textarea');
+        el.value = `${location.href}#${game.gameCode.toString()}`;
+        document.body.appendChild(el);
+        el.select();
+        document.execCommand('copy');
+        document.body.removeChild(el);
         // @ts-ignore
         Swal.fire({
             title: 'Link Copied',
@@ -239,7 +261,7 @@ class SpecialButtons {
         }).then((result) => {
             if (result.isConfirmed) {
                 if (result != undefined) {
-                    socket.emit("joingame", result.value);
+                    socket.emit("joinGame", result.value, colorHandling.playerColor);
                     history.pushState(null, null, "game");
                     linkHandling.handle();
                     game = new Game;
@@ -249,7 +271,7 @@ class SpecialButtons {
     }
     play() {
         // @ts-ignore
-        socket.emit("creategame", 100 / ((Number.parseInt($("#gamespeed").val())) / 100), Number.parseInt($("#gametime").val()), Boolean($("#getlength").val()));
+        socket.emit("createGame", 100 / ((Number.parseInt($("#gamespeed").val())) / 100), Number.parseInt($("#gametime").val()), Boolean($("#getlength").val()), colorHandling.playerColor);
         game = new Game;
     }
     fullscreen() {
@@ -286,9 +308,9 @@ class Slider {
     }
 }
 jQuery(() => {
-    linkHandling = new LinkHandling();
     colorHandling = new ColorHandling();
     specialButtons = new SpecialButtons();
+    linkHandling = new LinkHandling();
     if (localStorage.getItem("keybinds") == null) {
         let keyBindsObject = {
             "up": "w",

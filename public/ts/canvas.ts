@@ -6,28 +6,17 @@ function draw(x, y, gridSize, color) {
     ctx.lineWidth = 2;
     ctx.fillStyle = color;
     ctx.fillRect(x, y, gridSize, gridSize);
-    ctx.strokeRect(x, y, gridSize, gridSize);
+    ctx.strokeRect(x + 1, y + 1, gridSize - 2, gridSize - 2);
 }
 
-function renderSnake (tail, color, gridSize) {
-    ctx.lineWidth = 4;
+function renderSnake (tail, color, gridSize, coords) {
     ctx.fillStyle = color;
-    ctx.save();
-    ctx.beginPath();
+    ctx.fillRect(coords[0], coords[1], gridSize, gridSize);
 
     tail.forEach(coord => {
-        ctx.rect(coord[0], coord[1], gridSize, gridSize);
+        ctx.fillRect(coord[0], coord[1], gridSize, gridSize);
     });
-
-    ctx.stroke();
-    ctx.clip();
-
-    ctx.globalCompositeOperation='destination-out';
-
-    ctx.fillRect(0,0, canvas.width, canvas.height);
-    ctx.restore();
 }
-
 function clear() {
     ctx.fillStyle = localStorage.getItem("canvas-color") || "#ffffff";
     ctx.fillRect(0, 0, 990, 990);
