@@ -5,7 +5,35 @@ let game;
 
 jQuery(() => {
     game = new Game();
-    socket.emit("joinGame", location.pathname.split("/")[location.pathname.split("/").length - 1], localStorage.getItem("player-color") || "#000000")
+    draw(0, 0, 990, localStorage.getItem("canavs-color") || "#ffffff")
+
+    // @ts-ignore
+    Swal.fire({
+        title: 'Enter Username',
+        input: 'text',
+        inputAttributes: {
+            autocapitalize: 'off'
+        },
+
+        confirmButtonText: 'Play',
+        showLoaderOnConfirm: true,
+        preConfirm: () => {
+            // @ts-ignore
+            let name : any = $(Swal.getInput()).val();
+            return new Promise( (resolve, reject) => {
+                if (name.length > 16) reject();
+                else resolve (name)
+            }).catch(() => {
+                // @ts-ignore
+                Swal.showValidationMessage(
+                    `Name too long (Max 16 Characters)`
+                )
+            })
+        },
+        allowOutsideClick: true
+    }).then((name) => {
+        socket.emit("joinGame", location.pathname.split("/")[location.pathname.split("/").length - 1], localStorage.getItem("player-color") || "#0096C7", name.value)
+    })
 })
 
 class Food {
@@ -184,7 +212,7 @@ class Game {
 
                 if (player.alive) {
                     this.snake.acceptingInput = true;
-                    renderSnake(player.tail, player.color, this.gridSize, player.coords);
+                    renderSnake(player.tail, player.color, this.gridSize, player.coords, player.name);
                 }
             }
 

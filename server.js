@@ -45,7 +45,7 @@ io.on("connection", (socket) => {
         } catch {}
     });
 
-    socket.on("joinGame", (id, color) => {
+    socket.on("joinGame", (id, color, name) => {
         try {
             const game = games[id];
             game.players.push(socket);
@@ -55,7 +55,8 @@ io.on("connection", (socket) => {
                 length: 5,
                 alive: true,
                 tail: [],
-                color: color
+                color: color,
+                name: name
             }
 
             socket.emit("gameData", game.id);
@@ -133,7 +134,8 @@ class Game {
                 length: 5,
                 tail: [],
                 alive: true,
-                color: this.snakeData[socket.id].color
+                color: this.snakeData[socket.id].color,
+                name: this.snakeData[socket.id].name
             }
         })
     }
@@ -199,7 +201,8 @@ class Game {
                             length: 0,
                             alive: false,
                             tail: [],
-                            color: player.color
+                            color: player.color,
+                            name: player.name
                         }
 
                         this.emit("die", playerO[0])
