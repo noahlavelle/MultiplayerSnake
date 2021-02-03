@@ -113,7 +113,9 @@ class Snake {
             socket.emit("snakeMove", this.moveDir);
         })
         
-        $(document).on("keydown", (event) => {
+        document.addEventListener("keydown", (event) => {
+            if (event.repeat) return;
+
             if (this.acceptingInput && event.key in inputMaps) {
                 this.acceptingInput = false;
                 if (this.arrayEquals(inputMaps[event.key].map(Math.abs), this.moveDir.map(Math.abs))) return;
@@ -122,7 +124,7 @@ class Snake {
                 if ((this.arrayEquals(this.moveDir, [-1, 0]) || this.arrayEquals(this.moveDir, [0, -1])) && this.arrayEquals(this.coords, [0, 0])) this.moveDir = [0, 0]
                 socket.emit("snakeMove", this.moveDir);
             }
-        });
+        })
     }
 }
 
@@ -135,12 +137,17 @@ class Game {
     running : boolean = true;
     gameCode : number;
     timeLeft : number;
+    eatFoodSFX : any;
+    dieSFX : any
 
     playerColor : string = localStorage.getItem("player-color") || "#A686C7";
     foodColor : string = localStorage.getItem("food-color") || "#FE6F61";
 
     constructor () {
         this.snake = new Snake(0, 0, 5);
+        this.eatFoodSFX = new Audio("/sounds/food.wav");
+        this.dieSFX = new Audio("/sounds/die.wav");
+        this.dieSFX.volume = 0.6;
 
         this.initEvents();
     }
@@ -192,7 +199,7 @@ class Game {
 
             this.snake.acceptingInput = true;
             let player : any;
-            
+
             clear();
             for (player of Object.entries(snakeData)) {
                 if (player[0] === "food") {
@@ -217,6 +224,10 @@ class Game {
             this.updateInfo();
         });
 
+        socket.on("eatFood", () => {
+            this.eatFoodSFX.play();
+        })
+
         socket.on("die", () => {
             if (this.running) {
                 this.die();
@@ -230,6 +241,7 @@ class Game {
     }
 
     die() {
+        this.dieSFX.play();
         this.snake.moveDir = [0, 0];
 
         // @ts-ignore

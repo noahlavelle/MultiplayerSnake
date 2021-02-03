@@ -186,6 +186,7 @@ class Game {
                     }
 
                     if (this.arrayEquals(player.coords, this.foodCoords)) {
+                        this.emit("eatFood", playerO[0]);
                         player.length++;
                         this.createFood();
                     }
@@ -205,10 +206,6 @@ class Game {
                         }
 
                         this.emit("die", playerO[0])
-                    }
-        
-                    if (this.arrayEquals(this.foodCoords, player.coords)) {
-                        player.length++;
                     }
                 }
             });

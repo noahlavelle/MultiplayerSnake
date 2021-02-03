@@ -95,7 +95,9 @@ class Snake {
                 this.moveDir = [0, 0];
             socket.emit("snakeMove", this.moveDir);
         });
-        $(document).on("keydown", (event) => {
+        document.addEventListener("keydown", (event) => {
+            if (event.repeat)
+                return;
             if (this.acceptingInput && event.key in inputMaps) {
                 this.acceptingInput = false;
                 if (this.arrayEquals(inputMaps[event.key].map(Math.abs), this.moveDir.map(Math.abs)))
@@ -116,6 +118,9 @@ class Game {
         this.playerColor = localStorage.getItem("player-color") || "#A686C7";
         this.foodColor = localStorage.getItem("food-color") || "#FE6F61";
         this.snake = new Snake(0, 0, 5);
+        this.eatFoodSFX = new Audio("/sounds/food.wav");
+        this.dieSFX = new Audio("/sounds/die.wav");
+        this.dieSFX.volume = 0.6;
         this.initEvents();
     }
     initEvents() {
@@ -179,6 +184,9 @@ class Game {
             }
             this.updateInfo();
         });
+        socket.on("eatFood", () => {
+            this.eatFoodSFX.play();
+        });
         socket.on("die", () => {
             if (this.running) {
                 this.die();
@@ -190,6 +198,7 @@ class Game {
         this.running = false;
     }
     die() {
+        this.dieSFX.play();
         this.snake.moveDir = [0, 0];
         // @ts-ignore
         Swal.fire({
