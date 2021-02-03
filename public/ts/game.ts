@@ -21,12 +21,13 @@ jQuery(() => {
             // @ts-ignore
             let name : any = $(Swal.getInput()).val();
             return new Promise( (resolve, reject) => {
-                if (name.length > 16) reject();
-                else resolve (name)
+                console.log(name.trim())
+                if (name.length > 16 || !name.trim()) reject();
+                else resolve (name.trim())
             }).catch(() => {
                 // @ts-ignore
                 Swal.showValidationMessage(
-                    `Name too long (Max 16 Characters)`
+                    `Name invalid (Max 16 Characters)`
                 )
             })
         },

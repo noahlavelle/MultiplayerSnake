@@ -13,7 +13,8 @@ function renderSnake(tail, color, gridSize, coords, name) {
     tail.forEach(coord => {
         ctx.fillRect(coord[0], coord[1], gridSize, gridSize);
     });
-    text(name, "arial", "black", coords[0] - (gridSize / 4), coords[1] - 5);
+    ctx.textAlign = "center";
+    text(name, "arial", "black", coords[0] + 10, coords[1] - 5);
 }
 function clear() {
     ctx.fillStyle = localStorage.getItem("canvas-color") || "#ffffff";
