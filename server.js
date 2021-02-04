@@ -50,7 +50,7 @@ io.on("connection", (socket) => {
                 moveDir: [0, 0],
                 boosting: false,
                 coords: [0, 0],
-                length: 100,
+                length: 5,
                 alive: true,
                 tail: [],
                 color: color,
