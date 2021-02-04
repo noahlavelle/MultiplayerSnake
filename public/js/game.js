@@ -58,7 +58,7 @@ class Snake {
             [keyBinds["up"]]: [0, -1],
             [keyBinds["left"]]: [-1, 0],
             [keyBinds["down"]]: [0, 1],
-            [keyBinds["right"]]: [1, 0]
+            [keyBinds["right"]]: [1, 0],
         };
         let touchStart;
         document.addEventListener("touchstart", (event) => {
@@ -98,13 +98,31 @@ class Snake {
         document.addEventListener("keydown", (event) => {
             if (event.repeat)
                 return;
-            if (this.acceptingInput && event.key in inputMaps) {
+            let inputMaps = {
+                [keyBinds["up"]]: [0, -1],
+                [keyBinds["left"]]: [-1, 0],
+                [keyBinds["down"]]: [0, 1],
+                [keyBinds["right"]]: [1, 0],
+            };
+            if (this.acceptingInput && (event.key in inputMaps) || event.key == keyBinds["boost"]) {
                 this.acceptingInput = false;
-                if (this.arrayEquals(inputMaps[event.key].map(Math.abs), this.moveDir.map(Math.abs)))
-                    return;
+                try {
+                    if (this.arrayEquals(inputMaps[event.key].map(Math.abs), this.moveDir.map(Math.abs)))
+                        return;
+                }
+                catch (_a) { }
                 this.moveDir = inputMaps[event.key] != undefined ? inputMaps[event.key] : this.moveDir;
                 if ((this.arrayEquals(this.moveDir, [-1, 0]) || this.arrayEquals(this.moveDir, [0, -1])) && this.arrayEquals(this.coords, [0, 0]))
                     this.moveDir = [0, 0];
+                if (event.key == keyBinds["boost"] && this.length > 5) {
+                    this.moveDir[0] = Math.max(-4, Math.min(this.moveDir[0] * 4, 4));
+                    this.moveDir[1] = Math.max(-4, Math.min(this.moveDir[1] * 4, 4));
+                    setTimeout(() => {
+                        this.moveDir[0] /= 4;
+                        this.moveDir[1] /= 4;
+                        socket.emit("snakeMove", this.moveDir);
+                    }, 100);
+                }
                 socket.emit("snakeMove", this.moveDir);
             }
         });
@@ -120,6 +138,7 @@ class Game {
         this.snake = new Snake(0, 0, 5);
         this.eatFoodSFX = new Audio("/sounds/food.wav");
         this.dieSFX = new Audio("/sounds/die.wav");
+        this.blinkSFX = new Audio("/sounds/blink.wav");
         this.dieSFX.volume = 0.6;
         this.initEvents();
     }
@@ -167,7 +186,14 @@ class Game {
             clear();
             for (player of Object.entries(snakeData)) {
                 if (player[0] === "food") {
-                    draw(player[1].coords[0], player[1].coords[1], this.gridSize, this.foodColor);
+                    for (let coord of player[1]) {
+                        let color;
+                        if (coord[4] != null)
+                            color = coord[4];
+                        else
+                            color = this.foodColor;
+                        draw(coord[0], coord[1], this.gridSize, color);
+                    }
                     continue;
                 }
                 else if (player[0] == "time") {
@@ -186,6 +212,9 @@ class Game {
         });
         socket.on("eatFood", () => {
             this.eatFoodSFX.play();
+        });
+        socket.on("blink", () => {
+            this.blinkSFX.play();
         });
         socket.on("die", () => {
             if (this.running) {

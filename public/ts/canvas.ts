@@ -12,9 +12,11 @@ function draw(x, y, gridSize, color) {
 function renderSnake (tail, color, gridSize, coords, name) {
     ctx.fillStyle = color;
     ctx.fillRect(coords[0], coords[1], gridSize, gridSize);
+    ctx.strokeRect(coords[0], coords[1], gridSize, gridSize)
 
     tail.forEach(coord => {
         ctx.fillRect(coord[0], coord[1], gridSize, gridSize);
+        ctx.strokeRect(coord[0], coord[1], gridSize, gridSize)
     });
 
     ctx.textAlign = "center";

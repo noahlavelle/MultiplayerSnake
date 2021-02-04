@@ -280,8 +280,9 @@ class SpecialButtons {
 
     play() {
         let id = this.generateID();
+        console.log(Boolean($("#canblink").val()))
         // @ts-ignore
-        socket.emit("createGame", 100 / ((Number.parseInt($("#gamespeed").val())) / 100), Number.parseInt($("#gametime").val()), Boolean($("#getlength").val()), id);
+        socket.emit("createGame", 100 / ((Number.parseInt($("#gamespeed").val())) / 100), Number.parseInt($("#gametime").val()), $("#getlength").is(":checked"), $("#canblink").is(":checked"), id);
         location.pathname = `/play/${id}`
     }
 }
